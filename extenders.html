@@ -1,0 +1,61 @@
+<html>
+<head>
+</head>
+<body>
+
+
+<p data-bind="css: { error: firstName.hasError }">
+        <input data-bind='value: firstName, valueUpdate: "afterkeydown"' />
+        <span data-bind='visible: firstName.hasError, text: firstName.validationMessage'> </span>
+    </p>
+    <p data-bind="css: { error: lastName.hasError }">
+        <input data-bind='value: lastName, valueUpdate: "afterkeydown"' />
+        <span data-bind='visible: lastName.hasError, text: lastName.validationMessage'> </span>
+    </p>
+
+
+
+ <script src = "https://ajax.aspnetcdn.com/ajax/knockout/knockout-3.3.0.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
+        <script src="komapping.js"></script>
+        <script>
+ko.extenders.required = function(target, overrideMessage) {
+    //add some sub-observables to our observable
+    target.hasError = ko.observable();
+    target.validationMessage = ko.observable();
+ 
+    //define a function to do validation
+    function validate(newValue) {
+       target.hasError(newValue ? false : true);
+       target.validationMessage(newValue ? "" : overrideMessage || "This field is required");
+    }
+ 
+    //initial validation
+    validate(target());
+ 
+    //validate whenever the value changes
+    target.subscribe(validate);
+ 
+    //return the original observable
+    return target;
+};
+
+
+     ko.extenders.logChange = function(target, option) {
+    target.subscribe(function(newValue) {
+       console.log(option + ": " + newValue);
+    });
+    return target;
+};
+
+        function myModel(){
+            var self=this;
+            this.firstName = ko.observable("").extend({logChange: "first name",required:'please fill'});
+
+            self.lastName=ko.observable('').extend({required:""})
+            
+        }ko.applyBindings(new myModel());
+        </script>
+</body>
+
+</html>
