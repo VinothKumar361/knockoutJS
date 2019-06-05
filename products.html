@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+    <head title="Product page">
+    <style>
+    table{
+        width:100%;
+        align-content:center;
+        text-align:center;
+        border:2px solid black;
+     }tbody{background-color: white;color:black}
+    thead{
+        background-image:linear-gradient(red,black);
+        color:white;
+    }
+    body{
+        background-color:dodgerblue;
+    color:white;
+    }
+
+    tr{
+        
+     height:30px;
+      }
+      button  {
+          color:green; }
+      button:hover{
+          color:white;
+          background-color: green;
+      }
+  button:disabled{
+      color:red;
+  }
+  button:disabled:hover{
+      background-color:white;
+  }
+
+
+    </style>
+    </head>
+  <body>
+<table><thead><tr><th>NAME</th><th>SKEW ID</th><th>QUANTITY</th><th>PRICE</th><th>ADD TO CART</th></tr></thead>
+  <tbody>
+      <tr>
+      <td><input data-bind="textInput:name"></input></td>
+      <td><input data-bind="textInput:skewid" /></td>
+      <td><input type="number" data-bind="textInput:quantity"min="0" /></td>
+      <td><input type ="number" min="400" step="2" data-bind="textInput:price" /></td>
+      <td><button data-bind="click:addProduct,enable:name()!=null && skewid()!=null && price()!=null && quantity()!=NaN">ADD TO CART</button></td>
+    </tr>
+  </tbody>
+</table><br><br>
+
+
+<table data-bind="visible:products().length>0">
+     <thead><tr><th>NAME</th><th>SKEW ID</th><th>QUANTITY</th><th>PRICE</th><td>TOTAL PRICE</td><th><button data-bind="click:removeall"> REMOVE ALL</button></th></tr></thead>
+    <tbody data-bind="foreach:products">
+        <tr>
+        <td><a href='#' data-bind="text:Name,click:$parent.load"></input></td>
+        <td data-bind="text:Skewid" /></td>
+        <td data-bind="text:Quantity" /></td>
+        <td data-bind="text:Price" /></td>
+        <td data-bind="text:'$ '+totPrice()"></td>
+        <td><button data-bind="click:$parent.edit">EDIT</button><button data-bind="click:$parent.removeProduct">REMOVE</button></td>
+      </tr>
+    </tbody>
+  </table><br><br>
+
+  <table data-bind="visible : edittable()">
+        <thead>
+            <tr>
+               <th>Product Name</th>
+               <th>Skew Id</th>
+               <th>Product Quantity</th>
+               <th>Product Price</th><th></th>
+            </tr>
+        </thead>
+        <tbody data-bind="foreach:{data:products,as:'product'}">
+            <tr data-bind="visible:($parent.selectedProduct()==null?-1:(product.Name==$parent.selectedProduct().Name))">
+                <td><input  data-bind="value:product.Name"></select></td>
+                <td><input  data-bind="value:product.Skewid"></select></td>
+                <td><input type="number" data-bind="value:product.Quantity"></td>
+                <td><input type="number" min="400" step="2" data-bind="value:product.Price"></td>
+                <td><button data-bind="click:$root.close">UPDATE</button></td>
+             </tr>
+             <b data-bind="visible:$root.products().length>0">Total Price: <span data-bind="visible:$root.products().length>0,text:'$ '+$root.totalPrice(),style:{fontSize:'20px'}"></span></b>
+        </tbody>
+    </table>
+  
+
+
+        <script src = "https://ajax.aspnetcdn.com/ajax/knockout/knockout-3.3.0.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
+        <script>
+            
+        function product(name,skewid,quantity,price){
+            var self=this;
+            self.Name =ko.observable(name);
+            self.Skewid =ko.observable(skewid);
+            self.Quantity =ko.observable(quantity);
+            self.Price=ko.observable(price);
+            self.totPrice=ko.computed(function(){
+                return Number(self.Quantity())*Number(self.Price());
+            })
+        } 
+         function myModel(){
+            var self=this;
+            self.name =ko.observable();
+            self.skewid=ko.observable();
+            self.quantity=ko.observable();
+            self.price=ko.observable();
+            self.products=ko.observableArray();
+            self.edittable=ko.observable(false);
+            self.selectedProduct=ko.observable(null);
+      
+     
+        self.addProduct=function(){
+    
+            self.products.push(new product(self.name(),self.skewid(),self.quantity(),self.price()));
+            self.name(null);
+            self.skewid(null);
+            self.quantity(null);
+            self.price(null);
+       
+        }
+        self.edit=function(data){
+            self.selectedProduct(data);
+            self.edittable(true);
+
+        }    
+        self.totalPrice=function(){
+            var total=0;
+            for( var i=0;i<self.products().length;i++){
+                total+= Number(self.products()[i].totPrice());
+            }return total;
+        }
+        self.removeall=function(){
+            self.products.removeAll();
+        }
+
+        self.removeProduct=function(data){
+            if(data==self.selectedProduct()){
+                self.edittable(false);
+            }
+            self.products.remove(data);
+        }
+        self.close=function(){
+            self.edittable(false);
+            alert('UPDATED SUCCESSFULLY !!!')
+           
+        }
+        self.load=function(data){
+            var urlstring ="$"+data.Name()+"$"+data.Skewid()+"$"+data.Quantity()+"$"+data.Price();
+            window.open('productDescriptionPage.html?'+urlstring,'__blank');
+        }
+
+         }ko.applyBindings(new myModel());
+        </script>
+
+</body>
+</html>

@@ -1,0 +1,39 @@
+<html>
+    <head>
+        <style>
+        img{
+            width:200px;
+            height:200px;
+            float:left;
+        }
+        div{
+            float:left;
+            margin-left: 20px;
+        }
+        </style>
+    </head>
+<body>
+    <img src="productImage.jpg"><br>
+        <div >
+        <h1>Product Name :<span id="name"></span></h1> 
+         <p>Product Skew Id :<span id=Skewid></span></p>
+         <p>Quantity :<span id=Quantity></span></p>
+         <p>Price :<span id=price></span></p>
+         </div>
+    
+    <script>
+         var decode=window.location.href;
+         var decoded=decodeURIComponent(decode);
+         var name= decoded.split('$')[1];
+         var SkewId =decoded.split('$')[2];
+         var Quantity =decoded.split('$')[3];
+         var Price =decoded.split('$')[4];
+         
+         document.getElementById('name').innerHTML=name;
+         document.getElementById('Skewid').innerHTML=SkewId;
+         document.getElementById('Quantity').innerHTML=Quantity;
+         document.getElementById('price').innerHTML=Price;
+
+    </script>
+</body>
+</html>
